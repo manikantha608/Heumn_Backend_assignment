@@ -72,7 +72,7 @@ const deleteBook = async(req,res) => {
  
 
 
-const booksList = async (req, res, next) => {
+const booksList = async (req, res) => {
   let excludeFields = ["page", "limit"];
   let queryObj = { ...req.query };
   excludeFields.forEach((ele) => delete queryObj[ele]);
