@@ -73,6 +73,7 @@ const deleteBook = async(req,res) => {
 
 
 const booksList = async (req, res) => {
+  console.log("hiiiiiiiiiiiiiiiiiiiiii")
   let excludeFields = ["page", "limit"];
   let queryObj = { ...req.query };
   excludeFields.forEach((ele) => delete queryObj[ele]);
@@ -85,12 +86,14 @@ const booksList = async (req, res) => {
 
   if (req.query.page) {
     const booksCount = await Book.countDocuments(queryObj);
+    console.log(booksCount,"count")
     if (skip >= booksCount) {
       return res.status(404).json({message:"this page not found"})
     }
   }
   const book = await query;
-  if (book.length == 0) {
+  console.log(book,"books")
+  if (!book) {
     return res.status(404).json({message:"no book found"})
   }
 
