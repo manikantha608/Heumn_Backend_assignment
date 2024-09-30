@@ -16,7 +16,10 @@ mongoose.connect(process.env.MONGODB_URL)
 
 app.use(express.json())
 
-app.get("/",bookController.booksList)
+// app.get("/",bookController.booksList)
+app.get("/",(req,res)=>{
+  res.send("welcome")
+})
 
 app.use("/user",userRoutes);
 app.use("/book",bookRoutes);
