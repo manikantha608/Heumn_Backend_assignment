@@ -70,55 +70,34 @@ const deleteBook = async(req,res) => {
 //    res.status(200).json({ status: "success", data: books });
 //  };
  
+
+
 const booksList = async (req, res, next) => {
-  try {
-    const { page = 1, limit = 10, ...filters } = req.query;
+  let excludeFields = ["page", "limit"];
+  let queryObj = { ...req.query };
+  excludeFields.forEach((ele) => delete queryObj[ele]);
+  let query = Book.find(queryObj);
 
-    // Ensure page and limit are numbers
-    const pageNum = Number(page);
-    const limitNum = Number(limit);
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 10;
+  let skip = (page - 1) * limit;
+  query = query.skip(skip).limit(limit);
 
-    // Validate pagination inputs
-    if (pageNum < 1 || limitNum < 1) {
-      return res.status(400).json({ message: "Invalid pagination parameters" });
+  if (req.query.page) {
+    const booksCount = await Book.countDocuments(queryObj);
+    if (skip >= booksCount) {
+      return res.status(404).json({message:"this page not found"})
     }
-
-    // Query with filters, skip, and limit for pagination
-    let query = Book.find(filters)
-      .skip((pageNum - 1) * limitNum)
-      .limit(limitNum);
-
-    // Get total number of books with the current filters
-    const totalBooks = await Book.countDocuments(filters);
-
-    // Check if the requested page exists
-    if (totalBooks && pageNum > Math.ceil(totalBooks / limitNum)) {
-      return res.status(404).json({ message: "Page not found" });
-    }
-
-    // Fetch books
-    const books = await query;
-
-    // If no books are found
-    if (!books.length) {
-      return res.status(404).json({ message: "No books found" });
-    }
-
-    // Return paginated books data
-    res.status(200).json({
-      status: "success",
-      data: books,
-      pagination: {
-        totalBooks,
-        currentPage: pageNum,
-        totalPages: Math.ceil(totalBooks / limitNum),
-      },
-    });
-  } catch (error) {
-    return res.status(500).json({ message: error.message});
   }
-};
+  const book = await query;
+  if (book.length == 0) {
+    return res.status(404).json({message:"no book found"})
+  }
 
-
+  res.status(200).json({
+    status: "success",
+    data: book,
+  });
+}
 
 module.exports = {addBook,updateBook,deleteBook,booksList}
