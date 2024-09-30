@@ -7,6 +7,6 @@ const restrict = require("../middlewares/restrictedAccess");
 router.post("/add-book",verifyToken,restrict("admin"),bookController.addBook);
 router.put("/update-book/:bookId",verifyToken,restrict("admin"),bookController.updateBook)
 router.delete("/delete-book/:bookId",verifyToken,restrict("admin"),bookController.deleteBook)
-router.get("/all-books",bookController.booksList)
+router.get("/",bookController.booksList)
 
 module.exports = router;

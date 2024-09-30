@@ -5,8 +5,6 @@ const mongoose = require("mongoose")
 const userRoutes = require("./routes/userRoutes")
 const bookRoutes = require("./routes/bookRoutes")
 const barrowRoutes = require("./routes/borrowRoutes")
-// const bookController = require("./controllers/bookController")
-const bookController = require("./controllers/bookController")
 
 dotEnv.config()
 
@@ -17,10 +15,7 @@ mongoose.connect(process.env.MONGODB_URL)
 
 app.use(express.json())
 
-app.get("/",bookController.booksList)
-// app.get("/",(req,res)=>{
-//   res.send("welcome")
-// })
+app.use("/", bookRoutes);
 
 app.use("/user",userRoutes);
 app.use("/book",bookRoutes);
