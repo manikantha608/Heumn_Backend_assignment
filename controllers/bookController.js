@@ -187,7 +187,7 @@ const booksList = async (req, res) => {
         }
       }
     });
-    console.log(data,"mybooks")
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
