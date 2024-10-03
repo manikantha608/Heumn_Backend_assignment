@@ -2,16 +2,19 @@ const Book = require("../models/Book")
 
 const addBook = async(req,res)=>{
     try{
-       const {title,author,ISBN,publicationDate,genre,copies} = req.body;     
+       const {title,author,ISBN,publicationDate,genre,copies} = req.body;   
+       if(!title && !author && !ISBN && !publicationDate && !genre && !copies) {
+        return res.status(400).json({message:"Please enter required fields title,author,ISBN,publicationDate,genre,copies"})  
+       } 
      
        const book = new Book({
          title,author,ISBN,publicationDate,genre,copies           
        })
                
        await book.save()  
-       return res.status(200).json({message:"Book added successfully...!"})           
+       return res.status(201).json({message:"Book added successfully...!"})           
     }catch(error){
-       res.status(500).json({message:error.message})             
+       res.status(400).json({message:"Book is not added"})             
     }
 }
 
@@ -19,6 +22,11 @@ const addBook = async(req,res)=>{
 const updateBook = async(req,res) => {
     try{
       const bookId = req.params.bookId;
+      const {title,author,ISBN,publicationDate,genre,copies} = req.body;   
+       if(!title && !author && !ISBN && !publicationDate && !genre && !copies) {
+        return res.status(400).json({message:"Please enter required fields title,author,ISBN,publicationDate,genre,copies"})  
+       }
+     
       const book = await Book.findByIdAndUpdate(bookId,req.body,{
          new:true,
          runValidators:true
@@ -31,7 +39,7 @@ const updateBook = async(req,res) => {
       res.status(200).json({message:"updated successfully...!"})
 
     }catch(error){
-      return res.status(500).json({message:error.message})
+      return res.status(400).json({message:"book is not updated..!"})
     }
 }
 
@@ -44,7 +52,7 @@ const deleteBook = async(req,res) => {
       }
       res.status(200).json({ message: "Book deleted successfully" })
      }catch(error){
-        return res.status(500).json({message:error.message})
+        return res.status(400).json({message:error.message})
      }
 }
 
@@ -91,8 +99,9 @@ const booksList = async (req, res) => {
       }
     });
 
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message:"No data found"});
   }
 };
 

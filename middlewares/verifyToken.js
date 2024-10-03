@@ -5,14 +5,18 @@ const dotEnv = require("dotenv");
 dotEnv.config()
 
 const verifyToken = async(req,res,next)=>{
-      const token = req.headers.token;
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+         return res.status(400).json({ message: "Bearer token is required" });
+       }
+       const token = authHeader.split(' ')[1];
       
-      if(!token){
-         return res.status(401).json({message:"Token is required"})           
-      }
+      // if(!token){
+      //    return res.status(400).json({message:"Token is required"})           
+      // }
       try{
          const decoded = jwt.verify(token,process.env.SECRET_KEY);
-         console.log(decoded,"decoded")
          const user = await User.findById(decoded.userId)
 
          if(!user){
@@ -21,8 +25,7 @@ const verifyToken = async(req,res,next)=>{
          req.userId = user._id;
          next()
       }catch(error){
-         console.log(error)
-         res.status(500).json({message:"Invalid token"})
+         res.status(401).json({message:"Invalid token"})
       }
 }
 

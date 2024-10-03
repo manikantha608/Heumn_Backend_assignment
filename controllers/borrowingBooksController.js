@@ -31,7 +31,7 @@ const borrowingBook = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: "Books is failed to barrow" });
   }
 };
 
@@ -60,7 +60,7 @@ const returnBook = async (req, res) => {
       data: { book },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: "Book returning failed..!" });
   }
 };
 
@@ -74,7 +74,7 @@ const borrowHistory = async (req, res) => {
       data: { borrowRecords },
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: "Barrowing books History failed " });
   }
 };
 
@@ -129,7 +129,7 @@ const mostBorrowedBooks = async (req, res) => {
       data: report
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message:"No books  found here" });
   }
 };
 
@@ -183,7 +183,7 @@ const mostActiveMembers = async (req, res) => {
       data: report
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(404).json({ message: "Members not found "});
   }
 };
 
@@ -210,7 +210,7 @@ const bookAvailabilityReport = async (req, res) => {
       data: report
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(404).json({ message: "Not found" });
   }
 };
 

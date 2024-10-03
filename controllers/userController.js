@@ -7,6 +7,9 @@ dotEnv.config();
 const registration = async(req,res) => {
      const {name,email,password,role} = req.body;
      try{
+      if(!name && !email && !password && !role){
+         return res.status(400).json({message:"Please enter required fields name,email,password,role"})
+      }
       const userEmail = await User.findOne({email});
       if(userEmail){
          return res.status(400).json({message:"Email already taken"})           
@@ -21,11 +24,9 @@ const registration = async(req,res) => {
       })
       await newUser.save();
       res.status(201).json({message:"user registered successfully..!"})
-      console.log("Registered")
 
-     }catch(error){
-      console.log("Registration error => ",error.message)              
-      res.status(500).json({error:message.error})
+     }catch(error){             
+      res.status(400).json({message:"Registration failed..!"})
      }
 
 }
@@ -33,16 +34,18 @@ const registration = async(req,res) => {
 const login = async(req,res)=>{
     const {email,password}=req.body;
     try{
-       const user = await User.findOne({email});
+        if(!email && !password){
+         return res.status(400).json({message:"Please enter required fields email,password"})
+        }
+       const user = await User.findOne({email}).select('+password')
        if(!user || !(await bcrypt.compare(password,user.password))){
           return res.status(401).json({message:"Invalid username or password"})
        } 
+       user.password = undefined;
        const token = jwt.sign({userId:user._id},process.env.SECRET_KEY,{expiresIn:"1h"})
-       res.status(200).json({message:"Login successful..!",token}) 
-       console.log("login successfull")           
-    }catch(error){
-       console.log("login error")             
-       res.status(500).json({message:error.message})             
+       res.status(200).json({message:"Login successful..!",token,user})            
+    }catch(error){           
+       res.status(400).json({message:"Login failed..!"})             
     }
 }
 
